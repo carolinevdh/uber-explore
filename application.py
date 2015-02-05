@@ -1,4 +1,5 @@
 import json
+import random
 import urllib
 
 from flask import Flask, render_template, request
@@ -24,17 +25,17 @@ def index():
 def explore():
     """Render a random location and Uber button."""
 
-    # Load json keyed by underscored place names
+    # Load json holding list of locations
     with open(LOCATIONS_FILE, 'r') as f:
         locations = json.load(f)
 
     # Pick a random location
-
+    location = random.choice(locations['locations_list'])
 
     # Parse variables for page
-    destination = ''
-    dropoff_latitude = 0
-    dropoff_longitude = 0
+    destination = location['label']
+    dropoff_latitude = location['lat']
+    dropoff_longitude = location['lng']
 
     time_estimate = 0 # minutes
     price_estimate = ''
