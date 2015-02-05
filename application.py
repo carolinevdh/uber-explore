@@ -3,6 +3,7 @@ import random
 import urllib
 
 from flask import Flask, render_template, request
+
 app = Flask(__name__)
 
 # client id from developer.uber.com/apps
@@ -18,10 +19,9 @@ LOCATIONS_FILE = 'locations.json'
 @app.route('/')
 def index():
     """Render the start page."""
-    print 'Rendering index.html'
     return render_template('index.html')
 
-@app.route('/explore')
+@app.route('/explore', methods=['GET'])
 def explore():
     """Render a random location and Uber button."""
 
@@ -33,12 +33,31 @@ def explore():
     location = random.choice(locations)
 
     # Parse variables for page
-    destination = location['label']
-    dropoff_latitude = location['lat']
-    dropoff_longitude = location['lng']
+    destination = str(location['label'])
+    dropoff_latitude = float(location['lat'])
+    dropoff_longitude = float(location['lng'])
 
-    time_estimate = 0 # minutes
-    price_estimate = ''
+    request_url = construct_request(
+        destination=destination,
+        dropoff_latitude=dropoff_latitude,
+        dropoff_longitude=dropoff_longitude
+    )
+
+    # TODO: Use API to get these
+    time_estimate = 5 # minutes
+    price_estimate = '$10,000'
+
+    # Render the page
+    return render_template(
+        'explore.html',
+        destination=destination,
+        time_estimate=time_estimate,
+        price_estimate=price_estimate,
+        request_url=request_url
+    )
+
+def construct_request(destination, dropoff_latitude, dropoff_longitude):
+    """Helper function to construct the request url"""
 
     product_id = 'uuid'
 
@@ -51,16 +70,10 @@ def explore():
         'dropoff_latitude': dropoff_latitude,
         'dropoff_longitude': dropoff_longitude,
     }
-    request_url = MUBER_URL + urllib.urlencode(request_params)
 
-    # Render the page
-    return render_template(
-        'explore.html',
-        destination=destination,
-        time_estimate=time_estimate,
-        price_estimate=price_estimate,
-        request_url=request_url,
-    )
+    return MUBER_URL + urllib.urlencode(request_params)
+
+
 
 if __name__ == '__main__':
     app.run()

@@ -2,4 +2,7 @@
 <title>Uber Explore, built at WeCode with the Uber API</title>
 
 <h1>Hi, rider!</h1>
-<button>Find adventure</button>
+
+<form action="{{ url_for('explore') }}" method="GET">
+  <button>Find adventure</button>
+</form>
