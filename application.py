@@ -1,3 +1,4 @@
+import json
 import urllib
 
 from flask import Flask, render_template, request
@@ -10,6 +11,7 @@ WECODE_LATITUDE = 42.3799673
 WECODE_LONGITUDE = 71.1156968
 
 MUBER_URL = 'http://m.uber.com/sign-up?'
+LOCATIONS_FILE = 'locations.json'
 
 
 @app.route('/')
@@ -21,8 +23,10 @@ def index():
 @app.route('/explore')
 def explore():
     """Render a random location and Uber button."""
-    # Fetch all locations
 
+    # Load json keyed by underscored place names
+    with open(LOCATIONS_FILE, 'r') as f:
+        locations = json.load(f)
 
     # Pick a random location
 
