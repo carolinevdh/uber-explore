@@ -30,7 +30,7 @@ def explore():
         locations = json.load(f)
 
     # Pick a random location
-    location = random.choice(locations['locations_list'])
+    location = random.choice(locations)
 
     # Parse variables for page
     destination = location['label']
