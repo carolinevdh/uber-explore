@@ -1,8 +1,14 @@
-<!doctype html>
-<title>Uber Explore, built at WeCode with the Uber API</title>
+{% extends "base.html" %}
 
-<h1>Hi, rider!</h1>
+{% block content %}
 
-<form action="{{ url_for('explore') }}" method="GET">
-  <button>Find adventure</button>
-</form>
+<div class="jumbotron">
+  <div class="container">
+      <center>
+        <h1><small>Uber Explore - built at WeCode with the Uber API</small></h1>
+        <form action="{{ url_for('explore') }}" method=get class="form form-horizontal">
+          <button class="btn btn-primary">Adventure Time</button>
+    </center>
+  </div>
+</div>
+{% endblock %}
