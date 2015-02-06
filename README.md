@@ -17,6 +17,18 @@ $ source env/bin/activate
 $ pip install flask
 ```
 
+The app requires a `config.json` file that contains information
+(secrets) obtained from developer.uber.com for your app:
+
+```
+{"token": <developer token>,
+"client_id": <developer client_id>
+```
+
+This config file should be placed in the main `uber-code/` directory,
+the same directory which contains `application.py`.  These secrets
+should not be checked into the repo!
+
 Running the app
 ------
 

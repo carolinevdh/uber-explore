@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import json
 import operator as op
 import random
@@ -73,7 +74,7 @@ def explore():
     )
     time_estimate = int(round(time_estimate / 60.))
 
-    request_url = construct_request(
+    request_url = construct_request_url(
         client_id=client_id,
         destination=destination,
         dropoff_latitude=dropoff_latitude,
@@ -92,7 +93,7 @@ def explore():
     )
 
 
-def construct_request(client_id, destination, dropoff_latitude, dropoff_longitude, product_id=HARVARD_UBERX_ID):
+def construct_request_url(client_id, destination, dropoff_latitude, dropoff_longitude, product_id=HARVARD_UBERX_ID):
     """Helper function to construct the request url"""
 
     #  Construct deeplinkurl to request a ride
