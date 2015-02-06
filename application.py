@@ -4,7 +4,7 @@ import random
 import urllib
 import urllib2
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 
 
 app = Flask(__name__)
@@ -108,8 +108,8 @@ def construct_request(client_id, destination, dropoff_latitude, dropoff_longitud
     return MUBER_URL + urllib.urlencode(request_params)
 
 
-def get_price_estimates(token, start_latitude, start_longitude, end_latitude, end_longitude, product_id=HARVARD_UBERX_ID):
-    """Returns price estimate range as a string for given product_id and trip start and end points."""
+def get_price_estimates(token, start_latitude, start_longitude, end_latitude, end_longitude):
+    """Returns price estimates for all products available, lowest prices first by high_estimate."""
 
     request_params = {
         'start_latitude': start_latitude,
