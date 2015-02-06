@@ -10,8 +10,10 @@ Setup
 $ git clone https://github.com/carolinevdh/uber-explore.git
 $ cd uber-explore
 $ virtualenv env
+New python executable in test/bin/python2.7
+Also creating executable in test/bin/python
+Installing setuptools, pip...done.
 $ source env/bin/activate
-New python executable in env/bin/python Installing setuptools, pip...done.
 $ pip install flask
 ```
 
