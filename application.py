@@ -1,4 +1,5 @@
 import json
+import operator as op
 import random
 import urllib
 import urllib2
@@ -11,7 +12,7 @@ app = Flask(__name__)
 WECODE_LATITUDE = 42.3799673
 WECODE_LONGITUDE = -71.1156968
 
-DEFAULT_PRODUCT_ID = '55c66225-fbe7-4fd5-9072-eab1ece5e23e'
+HARVARD_UBERX_ID = '55c66225-fbe7-4fd5-9072-eab1ece5e23e'
 
 MUBER_URL = 'http://m.uber.com/sign-up?'
 PRODUCTS_URL = 'https://api.uber.com/v1/products?'
@@ -50,30 +51,35 @@ def explore():
     client_id = config['client_id']
     token = config['token']
 
-    request_url = construct_request(
-        client_id=client_id,
-        destination=destination,
-        dropoff_latitude=dropoff_latitude,
-        dropoff_longitude=dropoff_longitude
-    )
-
-    # Get string price range with currency.
-    price_estimate = get_price_estimate(
+    # Get product price estimates, with lowest cost first.
+    price_estimates = get_price_estimates(
         token=token,
         start_latitude=WECODE_LATITUDE,
         start_longitude=WECODE_LONGITUDE,
         end_latitude=dropoff_latitude,
         end_longitude=dropoff_longitude
     )
+    low_price_product = price_estimates[0]
+    price_estimate = low_price_product['estimate']
+    product_id = low_price_product['product_id']
+    product = low_price_product['localized_display_name']
 
     # Get time estimate in rounded minutes.
     time_estimate = get_time_estimate(
         token=token,
         start_latitude=WECODE_LATITUDE,
         start_longitude=WECODE_LONGITUDE,
-        product_id=DEFAULT_PRODUCT_ID
+        product_id=product_id
     )
     time_estimate = int(round(time_estimate / 60.))
+
+    request_url = construct_request(
+        client_id=client_id,
+        destination=destination,
+        dropoff_latitude=dropoff_latitude,
+        dropoff_longitude=dropoff_longitude,
+        product_id=product_id
+    )
 
     # Render the page
     return render_template(
@@ -81,11 +87,12 @@ def explore():
         destination=destination,
         time_estimate=time_estimate,
         price_estimate=price_estimate,
-        request_url=request_url
+        request_url=request_url,
+        product=product
     )
 
 
-def construct_request(client_id, destination, dropoff_latitude, dropoff_longitude, product_id=DEFAULT_PRODUCT_ID):
+def construct_request(client_id, destination, dropoff_latitude, dropoff_longitude, product_id=HARVARD_UBERX_ID):
     """Helper function to construct the request url"""
 
     #  Construct deeplinkurl to request a ride
@@ -101,7 +108,7 @@ def construct_request(client_id, destination, dropoff_latitude, dropoff_longitud
     return MUBER_URL + urllib.urlencode(request_params)
 
 
-def get_price_estimate(token, start_latitude, start_longitude, end_latitude, end_longitude, product_id=DEFAULT_PRODUCT_ID):
+def get_price_estimates(token, start_latitude, start_longitude, end_latitude, end_longitude, product_id=HARVARD_UBERX_ID):
     """Returns price estimate range as a string for given product_id and trip start and end points."""
 
     request_params = {
@@ -118,13 +125,13 @@ def get_price_estimate(token, start_latitude, start_longitude, end_latitude, end
 
     data = json.loads(response.read())
     product_prices = data['prices']
-    price_estimate = [i['estimate'] for i in product_prices if i['product_id'] == product_id]
-    price_estimate = price_estimate[0]
+    product_prices = [item for item in product_prices if item['high_estimate']]
+    product_prices = sorted(product_prices, key=op.itemgetter('high_estimate'))
 
-    return price_estimate
+    return product_prices
 
 
-def get_time_estimate(token, start_latitude, start_longitude, product_id=DEFAULT_PRODUCT_ID):
+def get_time_estimate(token, start_latitude, start_longitude, product_id=HARVARD_UBERX_ID):
     """Returns ETA in seconds for given product_id and (lat, lng)."""
 
     request_params = {
