@@ -13,6 +13,7 @@ $ virtualenv env
 $ source env/bin/activate
 New python executable in env/bin/python Installing setuptools, pip...done.
 $ pip install flask
+```
 
 Running the app
 ------
