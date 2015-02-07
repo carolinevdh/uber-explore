@@ -23,7 +23,7 @@ CONFIG_FILE = 'config.json'  # secrets should be kept in gitignored file of this
 LOCATIONS_FILE = 'locations.json'
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     """Render the start page."""
     return render_template('index.html')
